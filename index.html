@@ -29,32 +29,32 @@
   // 3. Master Data with Info
 const masterPairs = [
     { name: "Tim Bigelow (Executive Chairman)", hobby: "To be discovered...", info: "Hobby details coming soon!", image: "images/tim_bigelow.jpg" },
-    { name: "Raj Ghate (CEO)", hobby: "Tennis", info: "Also loves hiking; potentially inventing a hybrid 'Hiking-Tennis' sport!", image: "images/raj_ghate.jpg" },
+    { name: "Raj Ghate (CEO)", hobby: "Tennis", info: "Raj also loves hiking. Wonder if there is a hybrid Tennis/Hiking combo sport? What would that look like?", image: "images/raj_ghate.jpg" },
     { name: "Chad Braun (Operations Leader)", hobby: "To be discovered...", info: "Hobby details coming soon!", image: "images/chad_braun.jpg" },
-    { name: "Sasha Andersen (Legal)", hobby: "Reading", info: "Loves Virginia Woolf and the Romantics. She is also a talented painter!", image: "images/sasha_andersen.jpg" },
-    { name: "Jamie Breese (CTO)", hobby: "Collecting Comic Books", info: "A regular at Dreadnought Comics; Daredevil is his all-time favorite title.", image: "images/jamie_breese.jpg" },
-    { name: "John Reimer (Finance Leader)", hobby: "Scuba diving", info: "Recommends Turks and Caicos, the Bahamas, and night dives in Grand Cayman.", image: "images/john_reimer.jpg" },
+    { name: "Sasha Andersen (Legal)", hobby: "Reading", info: "Loves Virginia Woolf and the Romantics. She is also a talented painter! Maybe she paints books?", image: "images/sasha_andersen.jpg" },
+    { name: "Jamie Breese (CTO)", hobby: "Collecting Comic Books", info: "If you find your way to Dreadnought Comics, there's a good chance you'll run into Jamie, browsing Marvel and DC. Daredevil is his all-time favorite title.", image: "images/jamie_breese.jpg" },
+    { name: "John Reimer (Finance Leader)", hobby: "Scuba diving", info: "Jon has traveled far and wide in search of the best diving spots. He recommends Turks and Caicos, the Bahamas, and night dives in Grand Cayman.", image: "images/john_reimer.jpg" },
     { name: "Brett Gruber (Recruiting)", hobby: "Green Bay Packers", info: "A true Packers superfan who also keeps an eye on hockey and golf.", image: "images/brett_gruber.jpg" },
-    { name: "Bob Fisher (EL: BAE)", hobby: "Hockey", info: "A Detroit Red Wings fan who still hits the ice to play from time to time.", image: "images/bob_fisher.jpg" },
-    { name: "Bill Forstie (EL: Collins)", hobby: "To be discovered...", info: "Hobby details coming soon!", image: "images/bill_forstie.jpg" },
-    { name: "Marcus Earnest (Collins/BAE)", hobby: "Woodworking", info: "Builds musical sets and recently completed a massive 200-mile bike ride.", image: "images/marcus_earnest.jpg" },
+    { name: "Bob Fisher (EL: BAE)", hobby: "Hockey", info: "A Detroit Red Wings fan who still hits the ice to play from time to time. No high-sticking!", image: "images/bob_fisher.jpg" },
+    { name: "Bill Forstie (EL: Collins)", hobby: "The Great Outdoors", info: "Loves to be outside, from hiking the mountains of Arizona to walking along the beach at Oceanside, CA.", image: "images/bill_forstie.jpg" },
+    { name: "Marcus Earnest (Collins/BAE)", hobby: "Woodworking", info: "Marcus has been volunteering at a high school, building sets and backdrops for musicals and choir. He is also an avid cyclist who recently completed a massive 200-mile bike ride.", image: "images/marcus_earnest.jpg" },
     { name: "Pavan Vasudev (WindRiver/Merlin)", hobby: "Competitive Robotics", info: "Builds complex robots—hopefully none that plan world domination!", image: "images/pavan_vasudev.jpg" },
-    { name: "Dave Franson (EL: SandboxAQ, Honeywell)", hobby: "Building things/Home Improvement", info: "Loves the challenge of building things and improving his home space.", image: "images/dave_franson.jpg" },
+    { name: "Dave Franson (EL: SandboxAQ, Honeywell)", hobby: "Building things/Home Improvement", info: "Dave has recently DIY'd a solar system complete with 18kW of solar panels and 20kWh of batteries. He's also built up a dining room and remodeled bathrooms and kitchens, and is apparently embarrassed about his pool shed.", image: "images/dave_franson.jpg" },
     { name: "Chris Ihling (EL: WindRiver)", hobby: "To be discovered...", info: "Hobby details coming soon!", image: "images/chris_ihling.jpg" },
-    { name: "Amy Lee (EL: BAE)", hobby: "sewing", info: "An accomplished quilter who also enjoys building raised garden beds.", image: "images/amy_lee.jpg" },
+    { name: "Amy Lee (EL: BAE)", hobby: "sewing", info: "An accomplished quilter who also enjoys gardening. She recently completed a raised garden bed project.", image: "images/amy_lee.jpg" },
     { name: "Christy Leiphon (EL: Honeywell)", hobby: "Hiking", info: "Loves being out in nature, but also enjoys poker, singing, and reading.", image: "images/christy_leiphon.jpg" },
     { name: "Todd Newell (EL: Boeing)", hobby: "History", info: "Researches ancient Rome and Greece while snacking on Famous Amos cookies.", image: "images/todd_newell.jpg" },
     { name: "Jack Rahn (EL: Honeywell)", hobby: "To be discovered...", info: "Hobby details coming soon!", image: "images/jack_rahn.jpg" },
     { name: "Gautham Ramohalli (EL: Honeywell)", hobby: "Restoring classic cars", info: "Specializes in restoring classic Mercedes-Benz; woodworking is his runner-up hobby.", image: "images/gautham_ramohalli.jpg" },
     { name: "Ian Vinnicombe (UK)", hobby: "Tennis", info: "Tries to get out on the courts as often as possible to sharpen his game.", image: "images/ian_vinnicombe.jpg" },
-    { name: "Craig Anderson (BL: Boeing, GE, SandboxAQ, Wisk)", hobby: "Woodworking", info: "Built a deck and a specialized staircase that folds flat against the wall.", image: "images/craig_anderson.jpg" },
+    { name: "Craig Anderson (BL: Boeing, GE, SandboxAQ, Wisk)", hobby: "Woodworking", info: "Craig has recently built a specialized staircase that folds flat against the wall. Even veteran woodworkers know how complex and difficult a project like that can be, but he pulled it off!", image: "images/craig_anderson.jpg" },
     { name: "Jon Blaskovich (Boeing, GE, SandboxAQ, Wisk)", hobby: "To be discovered...", info: "Hobby details coming soon!", image: "images/jon_blaskovich.jpg" },
-    { name: "Mike Johnson (BL: Flight Data Systems, Honeywell, Merlin, Teledyne)", hobby: "Crossfit", info: "Deeply into Olympic weightlifting and high-intensity Crossfit training.", image: "images/mike_johnson.jpg" },
-    { name: "Percy Sanford (Flight Data Systems, Honeywell, Teledyne)", hobby: "Performance Cars", info: "Fond of German luxury engineering and American MOPAR muscle builds.", image: "images/percy_sanford.jpg" },
+    { name: "Mike Johnson (BL: Flight Data Systems, Honeywell, Merlin, Teledyne)", hobby: "Crossfit", info: "Mike is also into olympic weightlifting. Anyone want to guess what his personal bests are?", image: "images/mike_johnson.jpg" },
+    { name: "Percy Sanford (Flight Data Systems, Honeywell, Teledyne)", hobby: "Performance Cars", info: "Fond of German luxury engineering and American MOPAR muscle builds. Hey, can we carpool?", image: "images/percy_sanford.jpg" },
     { name: "Cyro Stone (BL: BAE, Acron, Axon)", hobby: "Golf", info: "Loves playing anywhere he can find a green; currently holds a +10 handicap.", image: "images/cyro_stone.jpg" },
     { name: "Julian Thomson (BL: Collins, Atkins, Kearfott, Pratt Whitney, WindRiver, Consortia)", hobby: "To be discovered...", info: "Hobby details coming soon!", image: "images/julian_thomson.jpg" },
     { name: "Stephanie Sinagra", hobby: "To be discovered...", info: "Hobby details coming soon!", image: "images/stephanie_sinagra.jpg" },
-    { name: "Christine Berce (Facilities/Employee Relations)", hobby: "cross-stitch", info: "Has been stitching since age 13; currently working on a complex bird design.", image: "images/christine_berce.jpg" },
+    { name: "Christine Berce (Facilities/Employee Relations)", hobby: "cross-stitch", info: "Has been stitching since age 13; Christine is currently working on a complex design involving birds of many colors. Can't wait to see the final product!", image: "images/christine_berce.jpg" },
     { name: "Mari Forstie (Front Desk)", hobby: "Watching the sunset", info: "Her phone is full of hundreds of sunset, moonrise, and city light photos.", image: "images/mari_forstie.jpg" }
 ];
 
@@ -663,6 +663,7 @@ select {
     </div>
 </body>
 </html>
+
 
 
 
