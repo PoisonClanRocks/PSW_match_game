@@ -1,0 +1,678 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>30-Pair Secure Match</title>
+    <!-- 1. FIXED: Correct Firebase Library Links -->
+	<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+	<!-- Add this near the top of your file, inside the <head> tags -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+
+<script>
+  // 2. Firebase Configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyA90-AVLd6EZXm-y7r6kKpTCerbg0Sv93E",
+    authDomain: "collins-match-game.firebaseapp.com",
+    projectId: "collins-match-game",
+    storageBucket: "collins-match-game.firebasestorage.app",
+    messagingSenderId: "580574919571",
+    appId: "1:580574919571:web:f1cbf7cec28a62dacc8666",
+    measurementId: "G-719ZJRNTYP"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  // 3. Master Data with Info
+const masterPairs = [
+    { name: "Lloyd Allen", hobby: "Infosec", info: "Has attended a few DEFCONs!", image: "images/lloyd_allen.jpg" },
+    { name: "Mark Belonio", hobby: "Finding the One Piece", info: "ONE PIECE IS REAL. Has been reading One Piece for literal decades. Also loves cooking Japanese food, riding a OneWheel, and MMA.", image: "images/mark_belonio.jpg" },
+    { name: "Scott Blake", hobby: "Gardening", info: "His favorite thing to grow in the garden is Tomatoes.", image: "images/scott_blake.jpg" },
+    { name: "Cheri Bowden", hobby: "Panning for Gold", info: "Has too many hobbies; also enjoys fishing, archery, sewing, and camping.", image: "images/cheri_bowden.jpg" },
+    { name: "Marley Breese", hobby: "Collecting Concert T-Shirts", info: "Current favorites in the collection are Jon Bellion and Rainbow Kitten Surprise. Try to guess her favorite music artist!", image: "images/marley_breese.jpg" },
+    { name: "Will Costanzo", hobby: "Collecting Cards & Star Wars", info: "Owns some rare Pokemon cards, and interesting items like grocery store promo cardboard stands. Collecting knows no limits!", image: "images/will_costanzo.jpg" },
+    { name: "Stan Draminski", hobby: "Columbus Crew (MLS Team)", info: "A huge fan of the Crew, and also loves playing board games.", image: "images/stan_draminski.jpg" },
+    { name: "Saul Figueroa", hobby: "Skiing", info: "Skiing has harmed him recently, but he still loves it.", image: "images/saul_figueroa.jpg" },
+    { name: "Amber Haas", hobby: "Retro Game Collecting", info: "Collection highlights include a Super Mario World cart for the SNES, and a Starfox64 cart with box for the Nintendo 64.", image: "images/amber_haas.jpg" },
+    { name: "Justin Keefer", hobby: "Country Dancing", info: "Ask him about his favorite two-step spots!", image: "images/justin_keefer.jpg" },
+    { name: "Alexis Keller", hobby: "Off-roading", info: "Her favorite places to take the rig off-road with family are Glamis and Pismo in CA. Unrelated - Alexis is good at EVERYTHING.", image: "images/alexis_keller.jpg" },
+    { name: "Alex King", hobby: "Mead Brewing", info: "Promises to bring a batch of home-brew to the office soon. Also has very interesting music tastes!", image: "images/alex_king.jpg" },
+    { name: "Duo Li", hobby: "FC Barcelona", info: "Has visited Barcelona and Camp Nou; attending a live game is a bucket list item!", image: "images/duo_li.jpg" },
+    { name: "Eric Magoffin", hobby: "Riding Motorcycles", info: "Loves riding long stretches like the north part of the 202, and dreams of getting gnarly on a Kawasaki Ninja H2.", image: "images/eric_magoffin.jpg" },
+    { name: "Benito Moeckly", hobby: "Comics", info: "Favorite is Ultimate Spiderman; currently into Absolute Batman. Also loves anything X-Men and X-Men adjacent.", image: "images/benito_moeckly.jpg" },
+    { name: "Drew Moses", hobby: "Wine Tasting", info: "Wine tasting includes travel! Recently visited Sienna, Italy for wine and Florentine steaks.", image: "images/drew_moses.jpg" },
+    { name: "Brian Murphy", hobby: "Woodworking", info: "Ask him about his latest shop project!", image: "images/brian_murphy.jpg" },
+    { name: "Tyler Neerings", hobby: "Factory-type Games", info: "His current favorite time-sink is the game Satisfactory.", image: "images/tyler_neerings.jpg" },
+    { name: "Josh O'Connor", hobby: "Mountain Biking", info: "Has been riding for a decade and recently started racing. Let's cheer him on!", image: "images/josh_oconnor.jpg" },
+    { name: "Alex Pagan", hobby: "To be discovered...", info: "Hobby info coming soon!", image: "images/alex_pagan.jpg" },
+    { name: "Geovany Pineda", hobby: "Gaming & Puzzles", info: "Also enjoys board games, escape rooms, and watching good TV. Is a hot sauce connoisseur.", image: "images/geovany_pineda.jpg" },
+    { name: "Natasha Proctor", hobby: "Running", info: "Has successfully completed several city runs.", image: "images/natasha_proctor.jpg" },
+    { name: "Jeff Rase", hobby: "Guitar and Piano", info: "Favorite song to play on piano is Chopin's Nocturne Op 9 No 2. Favorite on guitar is The Down Town by Days of the New.", image: "images/jeff_rase.jpg" },
+    { name: "Ed Riley", hobby: "Space Exploration", info: "Interested in SETI and the search for extraterrestrial life.", image: "images/ed_riley.jpg" },
+    { name: "John Sanchez", hobby: "Basketball", info: "Likes playing guard; all-time favorite player is Lebron James, current favorite is SGA.", image: "images/john_sanchez.jpg" },
+    { name: "Isaac Shell", hobby: "Writing Fantasy", info: "Currently writing a novel or three, and also developing a game in Unreal Engine.", image: "images/isaac_shell.jpg" },
+    { name: "Lam Truong", hobby: "To be discovered...", info: "Hobby info coming soon!", image: "images/lam_truong.jpg" },
+    { name: "Tyler Trumpie", hobby: "Fantasy Worldbuilding", info: "Builds D&D campaigns and stories, and loves to explore open-worlds to discover in-game lore.", image: "images/tyler_trumpie.jpg" },
+    { name: "Jake Whitebread", hobby: "Hiking", info: "His all-time favorite hikes are Brown's Peak and Flatiron here in AZ. Unrelated - one of the nicest people you will ever meet in this reality or many other alternate realities.", image: "images/jake_whitebread.jpg" },
+    { name: "Stefan Woods", hobby: "Reading", info: "Ask him for a book series recommendation!", image: "images/stefan_woods.jpg" }
+];
+
+  function startGame() {
+      const name = document.getElementById('p-name').value.trim();
+      if (!name) return alert("Please enter your name!");
+      if (localStorage.getItem('played_' + name)) return alert("You already played!");
+
+	// SHUFFLE NAMES HERE:
+    // This randomizes the order of people before they are rendered
+    shuffleArray(masterPairs);
+	  
+      document.getElementById('setup').style.display = 'none';
+      document.getElementById('game').style.display = 'block';
+      renderGame(name);
+  }
+
+function renderGame(name) {
+    const container = document.getElementById('list');
+    
+    // 1. Get UNIQUE hobbies only
+    // This looks at all people, grabs their hobbies, and removes any duplicates
+    const allHobbies = masterPairs.map(p => p.hobby);
+    const uniqueHobbies = [...new Set(allHobbies)]; 
+    
+    // 2. Scramble the unique list ONCE
+    // Make sure the shuffleArray function exists at the bottom of your script!
+    shuffleArray(uniqueHobbies);
+
+    // 3. Build the shared options list
+    const optionsHtml = uniqueHobbies.map(h => `<option value='${h}'>${h}</option>`).join('');
+
+    let gameHtml = ''; 
+masterPairs.forEach((p, i) => {
+    gameHtml += `
+        <div class='row'>
+            <div class="person-profile">
+                <img src="${p.image}" alt="${p.name}" class="profile-pic">
+                <div class="name-container">
+                    <span class="person-name">${p.name}</span>
+                </div>
+            </div>
+            <div class="select-wrapper">
+                <select id='s-${i}' onchange="updateProgress()">
+                    <option value=''>Choose Hobby...</option>
+                    ${optionsHtml}
+                </select>
+            </div>
+        </div>`;
+});
+
+
+
+    // 4. Inject into the page
+    container.innerHTML = gameHtml;
+    window.currentPlayer = name;
+}
+
+// CRITICAL: Ensure this function is present in your <script> section!
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+  async function submit() {
+      const btn = document.getElementById('sub-btn');
+      btn.disabled = true;
+      
+      let correct = 0;
+      let detailedBreakdown = {};
+      
+      // BUILD RESULTS GRID
+      let resultsHtml = `<div class="results-grid">`;
+
+      masterPairs.forEach((p, i) => {
+          const userSelection = document.getElementById(`s-${i}`).value;
+          const matched = (userSelection === p.hobby);
+          
+          detailedBreakdown[p.name] = {
+              selection: userSelection || "None",
+              isCorrect: matched
+          };
+
+          if (matched) correct++;
+
+          // Build a Card instead of a Table Row
+          resultsHtml += `
+            <div class="result-card match-${matched}">
+                <div class="card-header">
+                    <img src="${p.image}" class="profile-pic" style="width:40px; height:40px; border:none; box-shadow:none;">
+                    <span class="person-name" style="font-size:1rem;">${p.name}</span>
+                    <span style="margin-left:auto">${matched ? '✅' : '❌'}</span>
+                </div>
+                
+                <div style="margin: 10px 0;">
+                    <span style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Your Choice</span><br>
+                    <span class="${matched ? 'correct' : 'wrong'}" style="font-size:1rem;">${userSelection || "No Selection"}</span>
+                </div>
+
+                ${!matched ? `
+                <div style="margin-bottom: 10px;">
+                    <span style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Correct Hobby</span><br>
+                    <span style="font-weight:700; color:var(--text-main);">${p.hobby}</span>
+                </div>` : ''}
+
+                <div class="card-info">
+                    <strong style="color:var(--primary);">Did you know?</strong><br>
+                    ${p.info}
+                </div>
+            </div>`;
+      });
+
+      resultsHtml += `</div>`;
+
+      try {
+          const docRef = db.collection("game_results").doc(window.currentPlayer);
+          const docSnap = await docRef.get();
+
+          if (docSnap.exists) {
+              alert("You already submitted a score!");
+              location.reload();
+              return;
+          }
+
+          await docRef.set({
+              name: window.currentPlayer,
+              score: correct,
+              breakdown: detailedBreakdown,
+              date: new Date()
+          });
+          
+          localStorage.setItem('played_' + window.currentPlayer, 'true');
+          
+          // 1. Update the HTML on the screen with Logo, Results, and Final Note
+          document.body.innerHTML = `
+            <img src="images/performance_logo.jpg" alt="Company Logo" class="company-logo">
+            
+            <div class="summary-header">
+                <h1 class="results-title">
+                    Nice work, <br>
+                    <span class="results-name-highlight">${window.currentPlayer}!</span>
+                </h1>
+                <div class="score-badge">
+                    Final Score: ${correct} / 30
+                </div>
+            </div>
+            
+            ${resultsHtml}
+
+            <!-- The Personal Thank You Message -->
+            <div class="final-note">
+                Thank you for playing! I hope you had fun testing your knowledge of your team members, 
+                as well as maybe learning a thing or two about someone.<br><br>
+                I had a lot of fun making this game and discovering that I have 
+                something in common with many of you!
+                <div class="final-signature">✨ Thanks for being part of the team ✨</div>
+            </div>
+          `;
+
+          // 2. Scroll smoothly to the top
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+
+          // 3. Launch the celebration
+          confetti({
+              particleCount: 150,
+              spread: 70,
+              origin: { y: 0.6 },
+              colors: ['#6366f1', '#22c55e', '#f59e0b'],
+              zIndex: 9999
+          });
+
+      } catch (e) {
+          console.error(e);
+          alert("Submission failed. Check your internet or Firebase rules.");
+          btn.disabled = false;
+      }
+  }
+
+	async function showLeaderboard() {
+    const leaderboardDiv = document.createElement('div');
+    leaderboardDiv.innerHTML = `<br><hr><h2>🏆 Global Top 3</h2><div id="leader-list">Loading...</div>`;
+    document.body.appendChild(leaderboardDiv);
+
+    try {
+        // Query Firestore: Sort by score (descending) and date, limit to 3
+        const snapshot = await db.collection("game_results")
+            .orderBy("score", "desc")
+            .orderBy("date", "asc")
+            .limit(3)
+            .get();
+
+        let listHtml = "<ol style='text-align: left; display: inline-block;'>";
+        
+        if (snapshot.empty) {
+            listHtml += "<li>No scores yet!</li>";
+        } else {
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                // Showing only the name as requested
+                listHtml += `<li style="margin: 10px 0; font-size: 1.2em;"><b>${data.name}</b></li>`;
+            });
+        }
+        
+        listHtml += "</ol>";
+        document.getElementById("leader-list").innerHTML = listHtml;
+    } catch (e) {
+        console.error("Leaderboard Error:", e);
+        document.getElementById("leader-list").innerHTML = "Scoreboard temporarily unavailable.";
+    }
+}
+function updateProgress() {
+    let filledCount = 0;
+    
+    for (let i = 0; i < masterPairs.length; i++) {
+        const selectElement = document.getElementById(`s-${i}`);
+        const rowElement = selectElement.closest('.row'); // Finds the parent row div
+        
+        if (selectElement.value !== "") {
+            filledCount++;
+            rowElement.classList.add('row-selected');
+        } else {
+            rowElement.classList.remove('row-selected');
+        }
+    }
+
+    // Update the progress bar as before
+    const percent = (filledCount / masterPairs.length) * 100;
+    document.getElementById('progress-bar').style.width = percent + "%";
+    document.getElementById('progress-text').innerText = `Matched: ${filledCount} / ${masterPairs.length}`;
+}
+
+
+</script>
+
+<style>
+
+	/* Styling the Name and Subtext */
+.name-container {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.person-name {
+    font-size: 1.1rem;
+    font-weight: 700; /* Bold Inter */
+    color: var(--text-main);
+    letter-spacing: -0.02em;
+}
+
+.person-subtext {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--primary); /* Indigo highlight */
+}
+
+/* Enhancing the Card Row */
+.row {
+    background: white;
+    border: 1px solid #e2e8f0;
+    padding: 20px 24px;
+    border-radius: 16px; /* Smoother corners */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    margin: 16px 0;
+    width: 600px; /* Consistent desktop width */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Polishing the Dropdowns */
+select {
+    appearance: none; /* Custom look */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+    padding: 12px 40px 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-weight: 500;
+    color: var(--text-main);
+    transition: all 0.2s;
+}
+
+select:hover {
+    border-color: var(--primary);
+}
+
+	
+	.hero-title {
+    font-size: 2.2rem;
+    font-weight: 800; /* Extra bold */
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 10px;
+    color: var(--text-main);
+    text-align: center;
+}
+
+.hero-title span {
+    color: var(--primary); /* Indigo highlight */
+    background: linear-gradient(120deg, #818cf8 0%, #6366f1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
+#p-name {
+    padding: 14px 20px;
+    font-size: 1.1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#p-name:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+:root {
+    --primary: #6366f1; /* Indigo */
+    --success: #22c55e; /* Emerald */
+    --bg-main: #f8fafc;
+    --card-bg: #ffffff;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+}
+
+body { 
+    font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+    background-color: var(--bg-main); 
+    color: var(--text-main);
+    line-height: 1.5;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Containers */
+#setup, #game { 
+    background: white; 
+    padding: 30px; 
+    border-radius: 16px; 
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 600px;
+    margin-top: 20px;
+}
+
+/* The Modern Card Row */
+.row { 
+    background: var(--card-bg);
+    border: 1px solid #e2e8f0;
+    margin: 12px 0;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.row-selected {
+    border-color: var(--primary);
+    background-color: #f5f3ff; /* Light indigo */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transform: scale(1.01);
+}
+
+/* Profile Section */
+.person-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.profile-pic {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary);
+    background-color: #eee;
+}
+
+/* Modern Sticky Header */
+#sticky-header {
+    position: sticky;
+    top: 0;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px); /* Frosted glass */
+    padding: 15px;
+    border-bottom: 1px solid #e2e8f0;
+    z-index: 1000;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    box-sizing: border-box;
+}
+
+#progress-container {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto 5px auto;
+    background-color: #e2e8f0;
+    border-radius: 99px;
+    height: 10px;
+    overflow: hidden;
+}
+
+#progress-bar {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--success), #4ade80);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#progress-text {
+    margin: 0;
+    font-weight: 700;
+    font-size: 0.9em;
+    color: var(--text-muted);
+}
+
+/* Buttons & Inputs */
+button { 
+    background: linear-gradient(135deg, var(--primary), #4f46e5);
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+button:hover { 
+    transform: translateY(-1px);
+    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+}
+
+select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background-color: white;
+    cursor: pointer;
+}
+
+/* Results Table */
+/* Container for the new card results */
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    width: 100%;
+    max-width: 1000px;
+    margin-top: 30px;
+}
+
+/* Individual Result Card */
+.result-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    border: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.result-card.match-true { border-left: 5px solid var(--success); }
+.result-card.match-false { border-left: 5px solid #ef4444; }
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 800;
+}
+
+.card-info {
+    font-size: 0.9em;
+    color: var(--text-muted);
+    background: #f8fafc;
+    padding: 10px;
+    border-radius: 8px;
+    line-height: 1.4;
+}
+
+	.company-logo {
+    display: block;
+    margin: 0 auto 20px auto; /* Centers horizontally and adds space below */
+    max-width: 180px; /* Adjust this size to fit your logo's design */
+    height: auto;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); /* Subtle lift */
+}
+
+/* Ensure the setup container centers its contents */
+#setup {
+    text-align: center;
+    padding: 40px;
+}
+
+	/* Results Header Styling */
+.results-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    margin-bottom: 5px;
+    color: var(--text-main);
+    text-align: center;
+}
+
+.results-name-highlight {
+    color: var(--primary);
+    background: linear-gradient(120deg, #818cf8 0%, #6366f1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.score-badge {
+    display: inline-block;
+    background: #f1f5f9;
+    color: var(--primary);
+    padding: 8px 20px;
+    border-radius: 99px;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-top: 10px;
+    border: 1px solid #e2e8f0;
+}
+.final-note {
+    background: #f1f5f9;
+    color: #475569;
+    padding: 30px;
+    border-radius: 20px;
+    max-width: 650px;
+    margin: 50px auto;
+    text-align: center;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    border: 2px dashed #cbd5e1;
+}
+
+.final-signature {
+    margin-top: 20px;
+    font-weight: 800;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.9rem;
+}
+
+</style>
+
+</head>
+<body>
+    <div id="setup">
+		 <img src="images/performance_logo.jpg" alt="Company Logo" class="company-logo">
+    <h1 class="hero-title">
+        Welcome to the <br> 
+        <span>Collins FMS Next Match Game!</span>
+    </h1>
+    <p class="hero-subtitle">Enter your full name to begin the challenge:</p>
+    
+    <div class="input-group">
+        <input type="text" id="p-name" placeholder="First and Last Name">
+        <button onclick="startGame()">Start Playing</button>
+    </div>
+</div>
+
+    <div id="game" style="display:none;">
+		<div id="sticky-header">
+    <div id="progress-container">
+        <div id="progress-bar"></div>
+    </div>
+    <p id="progress-text">Matched: 0 / 30</p>
+</div>
+
+        <div id="list"></div>
+        <hr>
+        <button id="sub-btn" onclick="submit()">Submit Answers</button>
+    </div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
